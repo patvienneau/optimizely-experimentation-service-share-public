@@ -3,6 +3,11 @@
 ## Optimizely Integration
 We interface with Optimizely's JS SDK through a FE service built for our application, in order to provide compatibility with other experimentation tools that are used internally for other uses. This also allows us to provide to our own developers are much more succinct and condensed interface to initiate and trigger experimentation tests, as we want to standardize how we transfer data with the Optimizely service.
 
+## Problems reported
+We are currently experiencing two main problems:
+1. A/B test bucket assignment is currently approaching a 40/60 split, rather than an expected 50/50 split.
+2. Some tracked events are reporting vastly different numbers on the Optimizely platform than on our other reporting tools.
+
 ## Technical Assumptions/Decisions
 - Optimizely `userId` is defined as a UUID stored on the browser's local storage.
   - We **wanted** to be able to cover non-authorized flows with A/B testing, so business-defined IDs could not be used
@@ -10,8 +15,12 @@ We interface with Optimizely's JS SDK through a FE service built for our applica
   - We **accept** that local storage is not permanent persistence, and therefore a given user/browser combination may be considered as multiple users in the eyes of Optimizely, should their local storage be cleared.
   - We **assume** that these are low-frequency occurrence scenarios, and would therefore have low impact to downstream reporting.
   - We **assume** that impact would not discriminate in a measurable way in reporting between buckets.
-- Optimizely manages test traffic exclusion
+- Optimizely manages test traffic exclusion with data reporting in mind
   - We **assume** that excluded users will not count towards test visitors based on fallback assignment (such as control (`off`) bucket if users are excluded from test).
+- A/B test is configured with unique visitors in mind
+  - We **wanted** to exclude duplicate data
+  - We **assume** that multiple calls to Optimizely for a same `userId` will not increment the reported visitor count, nor the bucket assignment count.
+  - We **assume** that multiple registered events dispatched to Optimizely for the same user will not be double counted, if we report on **Unique conversions per visitor**.
 
 ## Invocation
 We interact with Optimizely directly through our own service on a per-need basis, in order to mould the user experience to the result of the feature flag.  We currently invoke Optimizely through JS invocations, though we’ve also implemented a React hook to adapt the JS invocation interface to be invoked in JSX.
