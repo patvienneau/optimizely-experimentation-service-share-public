@@ -41,3 +41,6 @@ We call Optimizely's `trackEvent` function [directly on the user context instanc
 
 ### Test assignment, decision
 Flag assignment is completed through the `decision` pattern when our service is [invoked to return experimentation information](https://github.com/patvienneau/optimizely-experimentation-service-share-public/blob/main/src/service/OptimizelyExperimentationService.ts#L212-L242). [Internal memory caching](https://github.com/patvienneau/optimizely-experimentation-service-share-public/blob/main/src/service/OptimizelyExperimentationService.ts#L219-L221) is maintained in order to reduce repeating computations by Optimizely and the risk of bloating impression count.
+
+## Optimizely Test Configuration
+See [here](https://github.com/patvienneau/optimizely-experimentation-service-share-public/blob/main/OptimizelyScreenshots) for screenshots showing the current setup of our Optimizely A/B test.
