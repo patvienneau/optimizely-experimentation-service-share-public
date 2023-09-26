@@ -20,4 +20,13 @@ We interact with Optimizely directly through our own service on a per-need basis
 We’ve tried to align our implementation with Optimizely’s suggested practices in order to get the most out of the platform. However, the implemented modules may also be source of issues that are affecting the reported data. Below I’ll go in details on each aspect, and their location in the source code for reference.  
 
 ### User Context
-User context is 
+User context is leveraged to define [user identification](https://github.com/patvienneau/optimizely-experimentation-service-share-public/blob/main/src/service/OptimizelyExperimentationService.ts#L106-L110), as well as user attributes that help guide test eligibility (both [referrer information](https://github.com/patvienneau/optimizely-experimentation-service-share-public/blob/main/src/service/OptimizelyExperimentationService.ts#L113-L117) and [account attributes](https://github.com/patvienneau/optimizely-experimentation-service-share-public/blob/main/src/service/OptimizelyExperimentationService.ts#L165-L170)). It's **assumed** that updating user context will not reset user identification, as [already-defined `userId`](https://github.com/patvienneau/optimizely-experimentation-service-share-public/blob/main/src/service/OptimizelyExperimentationService.ts#L106-L110) is maintained throughout.
+
+### Notification Center
+Notification center is used to [dispatch impression events](https://github.com/patvienneau/optimizely-experimentation-service-share-public/blob/main/src/service/OptimizelyExperimentationService.ts#L100-L105) to our other reporting tools. It's **assumed** that this won't have an impact on Optimizely's assignment and reporting functionality and behaviour.
+
+### Optimizely Event Tracking
+We call Optimizely's `trackEvent` function [directly on the user context instance](https://github.com/patvienneau/optimizely-experimentation-service-share-public/blob/main/src/service/OptimizelyExperimentationService.ts#L173-L180). In order to leverage existing tracked events that are managed by GTM to our various reporting platforms, we've implemented a periodic listener to [GTM events](https://github.com/patvienneau/optimizely-experimentation-service-share-public/blob/main/src/service/OptimizelyExperimentationService.ts#L125-L142) in order to transform them to Optimizely tracked events. This should allow us the ability to approach parity between reported stats in Optimizely with our other reporting platforms.
+
+### Test assignment, decision
+Flag assignment is completed through the `decision` pattern when the service is [invoked to return experimentation information](https://github.com/patvienneau/optimizely-experimentation-service-share-public/blob/main/src/service/OptimizelyExperimentationService.ts#L212-L242). Internal memory caching is maintained in order to reduce repeating computations by Optimizely and the risk of bloating impression count.
