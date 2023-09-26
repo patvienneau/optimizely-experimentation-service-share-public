@@ -16,6 +16,8 @@ We interface with Optimizely's JS SDK through a FE service built for our applica
 ## Invocation
 We interact with Optimizely directly through our own service on a per-need basis, in order to mould the user experience to the result of the feature flag.  We currently invoke Optimizely through JS invocations, though we’ve also implemented a React hook to adapt the JS invocation interface to be invoked in JSX.
 
+Optimizely is invoked by calling `getExperimentionTest` in our FE service. An example of this can be found through our [implemented React hook](https://github.com/patvienneau/optimizely-experimentation-service-share-public/blob/main/src/hook/useExperimentationTest.ts#L30). Implementation details of our invocation of Optimizely's `decision` function can be found [below](https://github.com/patvienneau/optimizely-experimentation-service-share-public#test-assignment-decision). 
+
 ## Optimizely Configuration and Setup
 We’ve tried to align our implementation with Optimizely’s suggested practices in order to get the most out of the platform. However, the implemented modules may also be source of issues that are affecting the reported data. Below I’ll go in details on each aspect, and their location in the source code for reference.  
 
